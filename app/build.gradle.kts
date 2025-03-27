@@ -56,6 +56,12 @@ dependencies {
 	implementation(libs.androidx.constraintlayout)
 	implementation(libs.androidx.cardview)
 	implementation(libs.picasso)
+	implementation(libs.androidx.appcompat)
+	implementation(libs.material)
+	implementation(libs.androidx.activity)
+	implementation(libs.appcompat)
+	implementation(libs.androidx.constraintlayout.compose.v111)
+
 
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)

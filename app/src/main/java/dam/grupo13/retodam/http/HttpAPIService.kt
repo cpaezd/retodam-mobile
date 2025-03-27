@@ -1,36 +1,62 @@
 package dam.grupo13.retodam.http
 
+import androidx.annotation.UiThread
 import dam.grupo13.retodam.http.request.NuevoUsuarioRequest
 import dam.grupo13.retodam.http.model.Solicitud
 import dam.grupo13.retodam.http.model.Vacante
+import dam.grupo13.retodam.http.request.LoginRequest
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class HttpAPIService {
+class HttpAPIService() {
+
 	private fun getRetroFit(): Retrofit{
 		return Retrofit.Builder()
-			.baseUrl("")
+			.baseUrl("http://192.168.90.22:8080/")
 			.addConverterFactory(GsonConverterFactory.create())
 			.build()
 	}
 
-	suspend fun login(username: String, passwd: String): Boolean {
+	suspend fun login(username: String, passwd: String): String {
 		val rf = this.getRetroFit();
+		val status: String
 
-		return withContext(Dispatchers.IO) {
-			val call = rf
-				.create(IHttpAPIService::class.java)
-				.login()
-			val res: String? = call.body()
+		try {
+			return withContext(Dispatchers.IO) {
+				val call = rf.create(IHttpAPIService::class.java).login(LoginRequest(username, passwd))
+				call.body()
 
-			return@withContext call.isSuccessful && res.equals("OK", true)
+				if(call.isSuccessful) {
+					"OK"
+				} else {
+					"ERR"
+				}
+			}
+		} catch (e: Exception) {
+
 		}
+
+		return ""
 	}
 
-	fun signup(nuevo: NuevoUsuarioRequest) {
+	suspend fun signup(nuevo: NuevoUsuarioRequest): String? {
+		val rf = this.getRetroFit();
+		var status: String? = null
 
+		return withContext(Dispatchers.IO) {
+			val call = rf.create(IHttpAPIService::class.java).register(nuevo)
+			status = call.body()
+
+			if(call.isSuccessful) {
+				status
+			} else {
+				null
+			}
+		}
 	}
 
 	fun getSolicitudes(): List<Solicitud> {

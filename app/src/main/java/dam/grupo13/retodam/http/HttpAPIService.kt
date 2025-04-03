@@ -1,10 +1,13 @@
 package dam.grupo13.retodam.http
 
+import android.util.Log
 import androidx.annotation.UiThread
 import dam.grupo13.retodam.http.request.NuevoUsuarioRequest
 import dam.grupo13.retodam.http.model.Solicitud
+import dam.grupo13.retodam.http.model.Usuario
 import dam.grupo13.retodam.http.model.Vacante
 import dam.grupo13.retodam.http.request.LoginRequest
+import dam.grupo13.retodam.http.response.OperationResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,42 +19,45 @@ class HttpAPIService() {
 
 	private fun getRetroFit(): Retrofit{
 		return Retrofit.Builder()
-			.baseUrl("http://192.168.90.22:8080/")
+			.baseUrl("http://192.168.1.94:8080/")
 			.addConverterFactory(GsonConverterFactory.create())
 			.build()
 	}
 
 	suspend fun login(username: String, passwd: String): String {
 		val rf = this.getRetroFit();
-		val status: String
 
-		try {
-			return withContext(Dispatchers.IO) {
+		return withContext(Dispatchers.IO) {
+			try {
 				val call = rf.create(IHttpAPIService::class.java).login(LoginRequest(username, passwd))
 				call.body()
 
 				if(call.isSuccessful) {
+					Log.i("DBG", "Correcto")
+
 					"OK"
 				} else {
-					"ERR"
+					Log.i("DBG", "Fallo")
+
+					"ERR01"
 				}
+			} catch(e: Exception) {
+				"ERR404"
 			}
-		} catch (e: Exception) {
 
 		}
-
-		return ""
 	}
 
-	suspend fun signup(nuevo: NuevoUsuarioRequest): String? {
+	suspend fun signup(nuevo: NuevoUsuarioRequest): Usuario? {
 		val rf = this.getRetroFit();
-		var status: String? = null
+		var status: Usuario? = null
 
 		return withContext(Dispatchers.IO) {
 			val call = rf.create(IHttpAPIService::class.java).register(nuevo)
 			status = call.body()
 
 			if(call.isSuccessful) {
+				Log.i("DBG", "OK!")
 				status
 			} else {
 				null

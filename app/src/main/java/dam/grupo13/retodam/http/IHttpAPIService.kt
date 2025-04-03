@@ -1,8 +1,10 @@
 package dam.grupo13.retodam.http
 
+import dam.grupo13.retodam.http.model.Usuario
 import dam.grupo13.retodam.http.request.LoginRequest
 import dam.grupo13.retodam.http.request.NuevaSolicitudRequest
 import dam.grupo13.retodam.http.request.NuevoUsuarioRequest
+import dam.grupo13.retodam.http.response.OperationResponse
 import dam.grupo13.retodam.http.response.SolicitudResponse
 import dam.grupo13.retodam.http.response.VacanteResponse
 import retrofit2.Response
@@ -14,37 +16,37 @@ import retrofit2.http.Path
 
 interface IHttpAPIService {
 
-	@GET("/usuario/{username}")
+	@GET("usuario/{username}")
 	suspend fun getDatos(@Path("username") username: String): Response<String>
 
-	@POST("/usuario/login/")
+	@POST("usuario/login")
 	// TODO: Revisar qué debe devolver
-	suspend fun login(@Body login: LoginRequest): Response<LoginRequest>
+	suspend fun login(@Body login: LoginRequest): Response<OperationResponse>
 
-	@POST("/usuario/registro/")
-	suspend fun register(@Body nuevo: NuevoUsuarioRequest): Response<String>
+	@POST("usuario/registro")
+	suspend fun register(@Body nuevo: NuevoUsuarioRequest): Response<Usuario>
 
-	@GET("/solicitud/")
+	@GET("solicitud")
 	suspend fun getSolicitudes(): Response<SolicitudResponse>
 
-	@GET("/solicitud/{id}")
+	@GET("solicitud/{id}")
 	suspend fun getSolicitud(@Path("id") id: Int): Response<SolicitudResponse>
 
-	@GET("/vacante/")
+	@GET("vacante")
 	suspend fun getVacantes(): Response<VacanteResponse>
 
-	@GET("/vacante/{id}")
+	@GET("vacante/{id}")
 	suspend fun getVacante(@Path("id") id: Int): Response<VacanteResponse>
 
-	@GET("/vacante/buscar/{filtro}/{valor}")
+	@GET("vacante/buscar/{filtro}/{valor}")
 	suspend fun getVacantesByQuery(
 		@Path("filtro") filtro: String,
 		@Path("valor") valor: String
 	): Response<VacanteResponse>
 
-	@POST("/vacante/{id}/solicitud")
+	@POST("vacante/{id}/solicitud")
 	suspend fun applyVacante(@Body nueva: NuevaSolicitudRequest): Response<String>
 
-	@PUT("/solicitud/retirar/{id}")
+	@PUT("solicitud/retirar/{id}")
 	suspend fun cancelarVacante(@Path("id") vacante: Int): Response<String>
 }

@@ -61,6 +61,8 @@ dependencies {
 	implementation(libs.androidx.activity)
 	implementation(libs.appcompat)
 	implementation(libs.androidx.constraintlayout.compose.v111)
+	implementation(libs.androidx.navigation.compose)
+
 
 
 	testImplementation(libs.junit)

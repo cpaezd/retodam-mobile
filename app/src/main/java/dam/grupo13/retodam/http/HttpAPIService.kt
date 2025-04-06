@@ -48,19 +48,25 @@ class HttpAPIService() {
 		}
 	}
 
-	suspend fun signup(nuevo: NuevoUsuarioRequest): Usuario? {
+	suspend fun signup(nuevo: NuevoUsuarioRequest): String {
 		val rf = this.getRetroFit();
-		var status: Usuario? = null
 
 		return withContext(Dispatchers.IO) {
-			val call = rf.create(IHttpAPIService::class.java).register(nuevo)
-			status = call.body()
+			try {
+				val call = rf.create(IHttpAPIService::class.java).register(nuevo)
+				call.body()
+				call.code()
 
-			if(call.isSuccessful) {
-				Log.i("DBG", "OK!")
-				status
-			} else {
-				null
+				if(call.isSuccessful) {
+					Log.i("DBG", "OK!")
+
+					"OK"
+				} else {
+					"ERR"
+				}
+			}
+			catch (e: Exception) {
+				"404"
 			}
 		}
 	}

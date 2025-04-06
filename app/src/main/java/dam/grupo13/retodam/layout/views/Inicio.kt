@@ -1,4 +1,4 @@
-package dam.grupo13.retodam.layout
+package dam.grupo13.retodam.layout.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,6 +16,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,17 +25,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import dam.grupo13.retodam.http.HttpAPIService
 import dam.grupo13.retodam.http.model.Vacante
 import dam.grupo13.retodam.layout.components.VacanteCard
 
-//@Preview
+@Preview
 @Composable
-fun Inicio(navContoller: NavController) {
+fun Inicio() {
 	val filtros = listOf<String>("Empresa", "Contrato")
 	var query by remember { mutableStateOf(TextFieldValue("")) }
-	var vacantes by remember { mutableStateOf(listOf<Vacante>()) }
+	var filtro by remember { mutableStateOf(filtros[0]) }
+	var vacantes by remember { mutableStateOf<List<Vacante>>(emptyList()) }
+
+	LaunchedEffect(Unit) {
+		var http = HttpAPIService();
+
+		vacantes = http.getLastVacantes()
+	}
 
 	ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 		var (busqueda, listadoVacantes) = createRefs()
@@ -49,8 +59,7 @@ fun Inicio(navContoller: NavController) {
 					start.linkTo(parent.start)
 					end.linkTo(parent.end)
 					bottom.linkTo(listadoVacantes.top)
-				},
-
+				}
 		) {
 			Column(
 				modifier = Modifier.fillMaxSize(),

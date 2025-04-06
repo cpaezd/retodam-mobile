@@ -24,7 +24,7 @@ interface IHttpAPIService {
 	suspend fun login(@Body login: LoginRequest): Response<OperationResponse>
 
 	@POST("usuario/registro")
-	suspend fun register(@Body nuevo: NuevoUsuarioRequest): Response<Usuario>
+	suspend fun register(@Body nuevo: NuevoUsuarioRequest): Response<OperationResponse>
 
 	@GET("solicitud")
 	suspend fun getSolicitudes(): Response<SolicitudResponse>
@@ -45,8 +45,8 @@ interface IHttpAPIService {
 	): Response<VacanteResponse>
 
 	@POST("vacante/{id}/solicitud")
-	suspend fun applyVacante(@Body nueva: NuevaSolicitudRequest): Response<String>
+	suspend fun applyVacante(@Body nueva: NuevaSolicitudRequest): Response<OperationResponse>
 
 	@PUT("solicitud/retirar/{id}")
-	suspend fun cancelarVacante(@Path("id") vacante: Int): Response<String>
+	suspend fun cancelarVacante(@Path("id") vacante: Int): Response<OperationResponse>
 }

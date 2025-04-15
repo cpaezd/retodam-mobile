@@ -1,6 +1,7 @@
 package dam.grupo13.retodam.http
 
 import dam.grupo13.retodam.http.model.Usuario
+import dam.grupo13.retodam.http.model.Vacante
 import dam.grupo13.retodam.http.request.LoginRequest
 import dam.grupo13.retodam.http.request.NuevaSolicitudRequest
 import dam.grupo13.retodam.http.request.NuevoUsuarioRequest
@@ -35,18 +36,17 @@ interface IHttpAPIService {
 	@GET("vacante")
 	suspend fun getVacantes(): Response<VacanteResponse>
 
-	@GET("vacante/{id}")
-	suspend fun getVacante(@Path("id") id: Int): Response<VacanteResponse>
+	@GET("vacante/ver/{id}")
+	suspend fun getVacante(@Path("id") id: Int): Response<Vacante>
 
-	@GET("vacante/buscar/{filtro}/{valor}")
-	suspend fun getVacantesByQuery(
-		@Path("filtro") filtro: String,
-		@Path("valor") valor: String
-	): Response<VacanteResponse>
+	@GET("vacante/empresa/{empresa}")
+	suspend fun getVacantesByEmpresa(@Path("empresa") empresa: String): Response<VacanteResponse>
 
-	@POST("vacante/{id}/solicitud")
+	@GET("vacante/categoria/{categoria}")
+	suspend fun getVacantesByCategoria(@Path("categoria") categoria: String): Response<VacanteResponse>
+	@POST("solicitud/nueva")
 	suspend fun applyVacante(@Body nueva: NuevaSolicitudRequest): Response<OperationResponse>
 
 	@PUT("solicitud/retirar/{id}")
-	suspend fun cancelarVacante(@Path("id") vacante: Int): Response<OperationResponse>
+	suspend fun cancelarSolicitud(@Path("id") solicitud: Int): Response<OperationResponse>
 }

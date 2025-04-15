@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import dam.grupo13.retodam.http.HttpAPIService
+import dam.grupo13.retodam.http.request.LoginRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -65,10 +66,10 @@ fun Login(navController: NavController) {
 					loading = !loading
 
 					CoroutineScope(Dispatchers.IO).launch {
-						val login = http.login(
+						val login = http.login(LoginRequest(
 							usuario.text.toString(),
 							password.text.toString()
-						)
+						))
 
 						when (login) {
 							"OK" -> ""

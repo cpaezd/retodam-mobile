@@ -1,6 +1,6 @@
 package dam.grupo13.retodam.layout.views
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,27 +23,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import dam.grupo13.retodam.http.HttpAPIService
 import dam.grupo13.retodam.http.model.Vacante
 import dam.grupo13.retodam.layout.components.VacanteCard
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-@Preview
 @Composable
-fun Inicio() {
-	val filtros = listOf<String>("Empresa", "Contrato")
+fun Inicio(navController: NavController) {
+	val filtros = listOf<String>("Empresa", "Categoria")
 	var query by remember { mutableStateOf(TextFieldValue("")) }
 	var filtro by remember { mutableStateOf(filtros[0]) }
 	var vacantes by remember { mutableStateOf<List<Vacante>>(emptyList()) }
+	var cargando by remember { mutableStateOf(false) }
 
 	LaunchedEffect(Unit) {
-		var http = HttpAPIService();
+		var http = HttpAPIService()
 
-		vacantes = http.getLastVacantes()
+		vacantes = http.getVacantes()
 	}
 
 	ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -53,7 +54,6 @@ fun Inicio() {
 			modifier = Modifier
 				.fillMaxWidth()
 				.fillMaxHeight(0.13f)
-				.background(Color.Magenta)
 				.constrainAs(busqueda) {
 					top.linkTo(parent.top)
 					start.linkTo(parent.start)
@@ -68,7 +68,8 @@ fun Inicio() {
 				Box(
 					modifier = Modifier
 						.fillMaxWidth()
-						.fillMaxHeight(0.5f)
+						.fillMaxHeight(0.5f),
+					contentAlignment = Alignment.Center
 				) {
 					TextField(
 						value = query,
@@ -76,7 +77,14 @@ fun Inicio() {
 						label = { Text("Búsqueda") },
 						trailingIcon = {
 							IconButton(
-								onClick = {}
+								onClick = {
+									var http = HttpAPIService()
+
+									CoroutineScope(Dispatchers.IO).launch {
+										vacantes = http.getVacantesByQuery(filtro, query.text.toString())
+									}
+
+								}
 							) {
 								Icon(Icons.Rounded.Search, "Buscar")
 							}
@@ -84,15 +92,19 @@ fun Inicio() {
 					)
 				}
 
-				Box(modifier = Modifier.fillMaxSize()
+				Box(
+					modifier = Modifier.fillMaxSize(),
 				) {
 					Row(
 						modifier = Modifier.fillMaxSize(),
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						for(filtro in filtros) {
-							RadioButton(selected = false, onClick = {})
-							Text(filtro)
+						for(f in filtros) {
+							RadioButton(
+								selected = filtro == f,
+								onClick = {	filtro = f }
+							)
+							Text(f)
 						}
 					}
 				}
@@ -103,7 +115,6 @@ fun Inicio() {
 			modifier = Modifier
 				.fillMaxWidth()
 				.fillMaxHeight(0.87f)
-				.background(Color.Cyan)
 				.constrainAs(listadoVacantes) {
 					start.linkTo(parent.start)
 					end.linkTo(parent.end)
@@ -113,7 +124,7 @@ fun Inicio() {
 		) {
 			LazyColumn {
 				items(vacantes.size) { i ->
-					VacanteCard(vacantes[i])
+					VacanteCard(navController,vacantes[i])
 				}
 			}
 		}

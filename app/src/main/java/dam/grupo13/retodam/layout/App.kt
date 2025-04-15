@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import dam.grupo13.retodam.layout.views.Inicio
 import dam.grupo13.retodam.layout.views.Login
 import dam.grupo13.retodam.layout.views.Register
-import dam.grupo13.retodam.layout.views.SolicitudView
+import dam.grupo13.retodam.layout.views.ListaSolicitudes
 import dam.grupo13.retodam.layout.views.VacanteView
 
 @Preview
@@ -18,8 +18,8 @@ import dam.grupo13.retodam.layout.views.VacanteView
 fun App() {
 	val navController = rememberNavController()
 
-	NavHost(navController = navController, startDestination = "Login") {
-		composable("Inicio") { Inicio() }
+	NavHost(navController = navController, startDestination = "Inicio") {
+		composable("Inicio") { Inicio(navController) }
 		composable("Login") { Login(navController) }
 		composable("Register") { Register(navController) }
 
@@ -28,14 +28,14 @@ fun App() {
 			arguments = listOf(navArgument("id") { type = NavType.StringType })
 		) { backStackEntry ->
 			val id = backStackEntry.arguments?.getString("id") ?: ""
-			SolicitudView(navController, id)
+			ListaSolicitudes(navController, id)
 		}
 
 		composable(
 			"VacanteView/{id}",
-			arguments = listOf(navArgument("id") { type = NavType.StringType })
+			arguments = listOf(navArgument("id") { type = NavType.IntType })
 		) { backStackEntry ->
-			val id = backStackEntry.arguments?.getString("id") ?: ""
+			val id = backStackEntry.arguments?.getInt("id") ?: 0
 			VacanteView(navController, id)
 		}
 	}

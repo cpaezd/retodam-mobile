@@ -1,71 +1,77 @@
 package dam.grupo13.retodam.layout.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import dam.grupo13.retodam.http.model.Vacante
 
-@Preview
+//@Preview
 @Composable
-fun VacanteCard(vacante: Vacante = Vacante(0, "Empresa", "Descripcion")) {
+fun VacanteCard(navController: NavController, vacante: Vacante = Vacante()) {
 	Card(
-		modifier = Modifier.fillMaxHeight(0.25f)
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(8.dp),
+		elevation = CardDefaults.cardElevation(4.dp)
 	) {
-		ConstraintLayout (modifier = Modifier.fillMaxSize()) {
-			var (nombreEmpresa, detalles, boton) = createRefs()
+		ConstraintLayout(
+			modifier = Modifier
+				.fillMaxWidth()
+				.wrapContentHeight()
+				.padding(16.dp)
+		) {
+			val (nombreEmpresa, descripcion, boton) = createRefs()
 
-			Box(
+			// Parte superior: Nombre de la empresa
+			Text(
+				text = vacante.nombre,
 				modifier = Modifier
 					.fillMaxWidth()
-					.fillMaxHeight(0.15f)
-					.background(Color.Cyan)
 					.constrainAs(nombreEmpresa) {
 						top.linkTo(parent.top)
-						end.linkTo(parent.end)
 						start.linkTo(parent.start)
-						bottom.linkTo(detalles.top)
+						end.linkTo(parent.end)
 					}
-			) {
+			)
 
-			}
-
-			Box(
+			// Parte del medio: Descripción
+			Text(
+				text = vacante.descripcion.toString(),
 				modifier = Modifier
 					.fillMaxWidth()
-					.fillMaxHeight(0.70f)
-					.background(Color.Magenta)
-					.constrainAs(detalles) {
+					.padding(top = 8.dp)
+					.constrainAs(descripcion) {
 						top.linkTo(nombreEmpresa.bottom)
-						end.linkTo(parent.end)
 						start.linkTo(parent.start)
-						bottom.linkTo(boton.top)
+						end.linkTo(parent.end)
 					}
-			) {
+			)
 
-			}
-
-
-			Box(
+			// Parte inferior: Botón
+			Button(
+				onClick = {
+					navController.navigate("VacanteView/${vacante.id}")
+				},
 				modifier = Modifier
 					.fillMaxWidth()
-					.fillMaxHeight(0.15f)
-					.background(Color.Yellow)
+					.padding(top = 16.dp)
 					.constrainAs(boton) {
-						top.linkTo(detalles.bottom)
-						end.linkTo(parent.end)
+						top.linkTo(descripcion.bottom)
 						start.linkTo(parent.start)
+						end.linkTo(parent.end)
 						bottom.linkTo(parent.bottom)
 					}
 			) {
-
+				Text("Aplicar")
 			}
 		}
 	}

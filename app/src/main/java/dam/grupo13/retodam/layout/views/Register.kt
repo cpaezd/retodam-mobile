@@ -47,7 +47,7 @@ fun Register(navController: NavController) {
 			},
 			verticalArrangement = Arrangement.spacedBy(24.dp)
 		) {
-			IconButton(onClick = { navController.navigate("Login")}) {
+			IconButton(onClick = { navController.navigate("Login") }) {
 				Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Atrás")
 			}
 

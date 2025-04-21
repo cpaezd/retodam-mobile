@@ -1,5 +1,6 @@
 package dam.grupo13.retodam.layout.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,12 +23,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import dam.grupo13.retodam.http.HttpAPIService
 import dam.grupo13.retodam.http.request.LoginRequest
+import dam.grupo13.retodam.store.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
-fun Login(navController: NavController) {
+fun Login(navController: NavController, appViewModel: AppViewModel) {
 
 	var usuario by remember { mutableStateOf(TextFieldValue("test3")) }
 	var password by remember { mutableStateOf(TextFieldValue("123456")) }
@@ -72,9 +75,14 @@ fun Login(navController: NavController) {
 						))
 
 						when (login) {
-							"OK" -> ""
-							"ERR01" -> ""
-							"ERR404" -> ""
+							"OK" -> {
+								withContext(Dispatchers.Main) {
+									appViewModel.setUsername(usuario.text)
+									navController.navigate("Inicio")
+								}
+							}
+							"ERR" -> Log.i("DBG", "Datos malos")
+							"404" -> Log.i("DBG", "Nada")
 						}
 					}
 

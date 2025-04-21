@@ -16,7 +16,7 @@ import dam.grupo13.retodam.http.model.Vacante
 
 //@Preview
 @Composable
-fun VacanteCard(navController: NavController, vacante: Vacante = Vacante()) {
+fun VacanteCard(navController: NavController, vacante: Vacante) {
 	Card(
 		modifier = Modifier
 			.fillMaxWidth()
@@ -31,7 +31,6 @@ fun VacanteCard(navController: NavController, vacante: Vacante = Vacante()) {
 		) {
 			val (nombreEmpresa, descripcion, boton) = createRefs()
 
-			// Parte superior: Nombre de la empresa
 			Text(
 				text = vacante.nombre,
 				modifier = Modifier
@@ -43,7 +42,6 @@ fun VacanteCard(navController: NavController, vacante: Vacante = Vacante()) {
 					}
 			)
 
-			// Parte del medio: Descripción
 			Text(
 				text = vacante.descripcion.toString(),
 				modifier = Modifier
@@ -56,10 +54,9 @@ fun VacanteCard(navController: NavController, vacante: Vacante = Vacante()) {
 					}
 			)
 
-			// Parte inferior: Botón
 			Button(
 				onClick = {
-					navController.navigate("VacanteView/${vacante.id}")
+					navController.navigate("VerVacante/${vacante.id}")
 				},
 				modifier = Modifier
 					.fillMaxWidth()
@@ -71,7 +68,7 @@ fun VacanteCard(navController: NavController, vacante: Vacante = Vacante()) {
 						bottom.linkTo(parent.bottom)
 					}
 			) {
-				Text("Aplicar")
+				Text("Más Información")
 			}
 		}
 	}

@@ -7,6 +7,7 @@ import dam.grupo13.retodam.http.model.Solicitud
 import dam.grupo13.retodam.http.model.Usuario
 import dam.grupo13.retodam.http.model.Vacante
 import dam.grupo13.retodam.http.request.LoginRequest
+import dam.grupo13.retodam.http.request.NuevaSolicitudRequest
 import dam.grupo13.retodam.http.response.OperationResponse
 import dam.grupo13.retodam.http.response.SolicitudResponse
 import dam.grupo13.retodam.http.response.VacanteResponse
@@ -22,7 +23,7 @@ class HttpAPIService() {
 
 	private fun getRetroFit(): Retrofit{
 		return Retrofit.Builder()
-			.baseUrl("http://192.168.90.22:8080/")
+			.baseUrl("http://192.168.1.94:8080/")
 			.addConverterFactory(GsonConverterFactory.create())
 			.build()
 	}
@@ -61,12 +62,12 @@ class HttpAPIService() {
 		return res
 	}
 
-	suspend fun getSolicitudes(): SolicitudResponse? {
+	suspend fun getSolicitudes(username: String): List<Solicitud> {
 		val rf = this.getRetroFit();
 		var res: SolicitudResponse? = SolicitudResponse()
 
 		try {
-			val call = rf.create(IHttpAPIService::class.java).getSolicitudes()
+			val call = rf.create(IHttpAPIService::class.java).getSolicitudes(username)
 
 			if(call.isSuccessful) {
 				res = call.body()
@@ -76,7 +77,7 @@ class HttpAPIService() {
 			res?.add(Solicitud())
 		}
 
-		return res
+		return (res ?: SolicitudResponse()) as List<Solicitud>
 	}
 
 	suspend fun getVacantes(): List<Vacante> {
@@ -140,17 +141,18 @@ class HttpAPIService() {
 		return vacanteInfo
 	}
 
-	suspend fun applyVacante(vacante: Int): String {
+	suspend fun applyVacante(nuevaSolicitudRequest: NuevaSolicitudRequest): String {
 		val rf = this.getRetroFit();
 		var res = "ERR"
 
 		try {
-			val call = rf.create(IHttpAPIService::class.java).getVacante(vacante)
+			val call = rf.create(IHttpAPIService::class.java).applyVacante(nuevaSolicitudRequest)
 			call.body()
 
 			res = if (call.isSuccessful) "OK" else "ERR"
 
 		} catch (e: Exception) {
+			Log.i("DBG", e.message.toString())
 			res = "404"
 		}
 
@@ -158,21 +160,20 @@ class HttpAPIService() {
 	}
 
 	suspend fun cancelarSolicitud(solicitud: Int): String {
-//		val rf = this.getRetroFit();
-//		var res = "ERR"
-//
-//		try {
-//			val call = rf.create(IHttpAPIService::class.java).getVacante(vacante)
-//			call.body()
-//
-//			res = if (call.isSuccessful) "OK" else "ERR"
-//
-//		} catch (e: Exception) {
-//			res = "404"
-//		}
-//
-//		return res
+		val rf = this.getRetroFit();
+		var res = "ERR"
 
-		return ""
+		try {
+			val call = rf.create(IHttpAPIService::class.java).cancelarSolicitud(solicitud)
+			call.body()
+
+			res = if (call.isSuccessful) "OK" else "ERR"
+
+		} catch (e: Exception) {
+			Log.i("DBG", e.toString())
+			res = "404"
+		}
+
+		return res
 	}
 }

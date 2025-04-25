@@ -46,7 +46,7 @@ fun ListaSolicitudes() {
 
 		LazyColumn {
 			items(solicitudes.size) {
-					s -> SolicitudCard(solicitudes[s])
+				s -> SolicitudCard(solicitudes[s])
 			}
 		}
 	}

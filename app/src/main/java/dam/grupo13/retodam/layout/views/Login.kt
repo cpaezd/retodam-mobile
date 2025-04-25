@@ -1,6 +1,7 @@
 package dam.grupo13.retodam.layout.views
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
@@ -33,8 +35,10 @@ import kotlinx.coroutines.withContext
 fun Login(navController: NavController, appViewModel: AppViewModel) {
 
 	var usuario by remember { mutableStateOf(TextFieldValue("test3")) }
-	var password by remember { mutableStateOf(TextFieldValue("123456")) }
+	var password by remember { mutableStateOf(TextFieldValue("")) }
 	var loading by remember { mutableStateOf(false) }
+
+	val context = LocalContext.current
 
 	ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 		var (columna) = createRefs()
@@ -81,8 +85,26 @@ fun Login(navController: NavController, appViewModel: AppViewModel) {
 									navController.navigate("Inicio")
 								}
 							}
-							"ERR" -> Log.i("DBG", "Datos malos")
-							"404" -> Log.i("DBG", "Nada")
+							"ERR" -> {
+								withContext(Dispatchers.Main) {
+									Toast
+										.makeText(
+											context,
+											"Usuario o contraseña incorreectos",
+											Toast.LENGTH_SHORT
+										)
+										.show()
+								}
+							}
+							"404" -> withContext(Dispatchers.Main) {
+								Toast
+									.makeText(
+										context,
+										"Error del servidor. Inténtelo más tarde",
+										Toast.LENGTH_SHORT
+									)
+									.show()
+							}
 						}
 					}
 

@@ -3,6 +3,6 @@ package dam.grupo13.retodam.http.response
 import com.google.gson.annotations.SerializedName
 
 data class OperationResponse (
-	@SerializedName("body.mensaje")
-	val mensaje: String?
+	@SerializedName("statusCodeValue")
+	val code: Int
 )

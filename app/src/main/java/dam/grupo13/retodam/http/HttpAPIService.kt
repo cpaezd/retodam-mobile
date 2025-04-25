@@ -32,11 +32,15 @@ class HttpAPIService() {
 		val rf = this.getRetroFit();
 		var res = "ERR"
 
+		Log.i("DBG", loginRequest.toString())
+
 		try {
 			val call = rf.create(IHttpAPIService::class.java).login(loginRequest)
 			call.body()
 
-			res = if (call.isSuccessful) "OK" else "ERR"
+			res = if(call.isSuccessful && call.body()?.code == 200) "OK" else "ERR"
+
+			Log.i("DBG", call.body()?.code.toString())
 
 		} catch (e: Exception) {
 			res = "404"

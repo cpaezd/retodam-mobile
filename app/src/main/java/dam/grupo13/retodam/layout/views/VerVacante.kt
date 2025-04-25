@@ -1,6 +1,7 @@
 package dam.grupo13.retodam.layout.views
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +40,7 @@ import dam.grupo13.retodam.store.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -48,6 +51,7 @@ fun VerVacante(
 ) {
 	var vacante by remember { mutableStateOf(Vacante()) }
 	var boton by remember { mutableStateOf(true) }
+	val context = LocalContext.current
 
 	LaunchedEffect(Unit) {
 		var http = HttpAPIService()
@@ -174,7 +178,15 @@ fun VerVacante(
 					CoroutineScope(Dispatchers.IO).launch {
 						res = http.applyVacante(nsr) == "OK"
 
-						boton = !res
+						withContext(Dispatchers.Main) {
+							Toast.makeText(
+								context,
+								if (res) "Vacante aplicada correctamente" else "Fallo al aplicar vacante",
+								Toast.LENGTH_SHORT
+							).show()
+
+							boton = !res
+						}
 					}
 				},
 				modifier = Modifier

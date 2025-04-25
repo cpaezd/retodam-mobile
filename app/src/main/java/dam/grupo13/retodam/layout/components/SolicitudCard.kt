@@ -1,6 +1,7 @@
 package dam.grupo13.retodam.layout.components
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -25,10 +27,11 @@ import dam.grupo13.retodam.http.model.Solicitud
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SolicitudCard(solicitud: Solicitud) {
-	Log.i("DBG", solicitud.id.toString())
+	val context = LocalContext.current
 
 	Card(
 		modifier = Modifier
@@ -80,7 +83,17 @@ fun SolicitudCard(solicitud: Solicitud) {
 								var http = HttpAPIService()
 
 								CoroutineScope(Dispatchers.IO).launch {
-									http.cancelarSolicitud(solicitud.id)
+									val res = http.cancelarSolicitud(solicitud.id) == "OK"
+
+									withContext(Dispatchers.Main) {
+										Toast
+											.makeText(
+												context,
+												if (res) "Solicitud eliminada" else "Fallo al eliminar solicitud",
+												Toast.LENGTH_SHORT
+											)
+											.show()
+									}
 								}
 							},
 							modifier = Modifier
